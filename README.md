@@ -2,7 +2,7 @@
 
 This is an Android app for adding, updating and removing items on your "ToDo" list.
 
-Time spent: About 2 hours so far
+Time spent: About 3 hours so far
 
 Completed user stories:
 
@@ -11,8 +11,10 @@ Completed user stories:
  
 Notes:
 
-Not sure if I'm persisting correctly as I've not used the hint "saveItems" on the last step.
+Not sure if I'm persisting correctly as I've not used the hint "saveItems" on the last step. I'm going to start working on "Extras" next.
 
-Will add soon a video of all requested user stories:
+Below gif displays the required user stories:
 
-GIF will be created with [LiceCap](http://www.cockos.com/licecap/).
+![Video Walkthrough](Simple_ToDo.gif)
+
+GIF was created with [LiceCap](http://www.cockos.com/licecap/).
