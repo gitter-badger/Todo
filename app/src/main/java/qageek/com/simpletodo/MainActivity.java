@@ -7,22 +7,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
-    ArrayList<String> items;
-    ArrayAdapter<String> itemsAdapter;
+    ArrayList<TodoItem> todoItems;
+    ItemsAdapter itemsAdapter;
     ListView lvItems;
     private final int REQUEST_CODE = 20;
 
@@ -30,16 +24,19 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        todoItems = TodoItem.all();
+        itemsAdapter = new ItemsAdapter(this, todoItems);
+
         lvItems = (ListView) findViewById(R.id.lvItems);
-        readItems();
-        itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
         lvItems.setAdapter(itemsAdapter);
+
         setupListViewListener();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds todoItems to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -62,10 +59,12 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE){
-            String newName = data.getExtras().getString("name");
-            int position = data.getExtras().getInt("position");
-            updateItem(position, newName);
-            Toast.makeText(this, newName, Toast.LENGTH_SHORT).show();
+
+            Long todoItemID = Long.parseLong(data.getExtras().getString("itemID"));
+            TodoItem todoItem = TodoItem.load(TodoItem.class, todoItemID);
+
+            itemsAdapter.notifyDataSetChanged();
+            Toast.makeText(this, todoItem.getBody(), Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -75,9 +74,9 @@ public class MainActivity extends ActionBarActivity {
                 new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView parent, View view, int position, long id) {
-                        items.remove(position);
+                        todoItems.get(position).delete();
+                        todoItems.remove(position);
                         itemsAdapter.notifyDataSetChanged();
-                        writeItems();
                         return true;
                     }
                 }
@@ -87,51 +86,23 @@ public class MainActivity extends ActionBarActivity {
                 new AdapterView.OnItemClickListener(){
                     @Override
                     public void onItemClick(AdapterView parent, View view, int position, long id) {
-                        String text = ((TextView) view).getText().toString();
-                        launchEditItemView(position, text);
+                        launchEditItemView(todoItems.get(position));
                     }
                 }
         );
     }
 
-    private void readItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, "todo.txt");
-        try {
-            items = new ArrayList<String>(FileUtils.readLines(todoFile));
-        } catch (IOException e) {
-            items = new ArrayList<String>();
-        }
-    }
-
-    private void writeItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, "todo.txt");
-        try {
-            FileUtils.writeLines(todoFile, items);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void onAddItem(View view) {
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
-        String itemText = etNewItem.getText().toString();
-        itemsAdapter.add(itemText);
+        TodoItem todoItem = new TodoItem(etNewItem.getText().toString());
+        todoItem.save();
+        itemsAdapter.add(todoItem);
         etNewItem.setText("");
-        writeItems();
     }
 
-    public void updateItem(int position, String newName){
-        items.set(position, newName);
-        itemsAdapter.notifyDataSetChanged();
-        writeItems();
-    }
-
-    public void launchEditItemView(int position, String text){
+    public void launchEditItemView(TodoItem item){
         Intent editIntent = new Intent(this, EditItemActivity.class);
-        editIntent.putExtra("text", text);
-        editIntent.putExtra("position", position);
+        editIntent.putExtra("itemID", item.getId().toString());
         startActivityForResult(editIntent, REQUEST_CODE);
     }
 }

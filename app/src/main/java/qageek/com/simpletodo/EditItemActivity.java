@@ -11,23 +11,29 @@ import android.widget.EditText;
 
 public class EditItemActivity extends ActionBarActivity {
     private int position;
+    private Long itemID;
+    private TodoItem item;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_item);
         position = getIntent().getIntExtra("position", 0);
-        String text = getIntent().getStringExtra("text");
+
+        itemID =  Long.parseLong(getIntent().getStringExtra("itemID"));
+        item = TodoItem.load(TodoItem.class, itemID);
+        String itemBody = item.getBody();
+
         EditText et = (EditText) findViewById(R.id.etItemName);
         et.requestFocus();
-        et.setText(text);
-        et.setSelection(text.length());
+        et.setText(itemBody);
+        et.setSelection(itemBody.length());
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds todoItems to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_edit_item, menu);
         return true;
     }
@@ -49,9 +55,13 @@ public class EditItemActivity extends ActionBarActivity {
 
     public void onSave(View view){
         EditText etNewItem = (EditText) findViewById(R.id.etItemName);
+        item.setBody(etNewItem.getText().toString());
+        item.save();
+                
         Intent data = new Intent();
-        data.putExtra("name", etNewItem.getText().toString());
         data.putExtra("position", position);
+        data.putExtra("itemID", item.getId().toString());
+
         setResult(RESULT_OK, data);
         finish();
     }
