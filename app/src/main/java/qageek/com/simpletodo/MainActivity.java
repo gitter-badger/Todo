@@ -62,9 +62,11 @@ public class MainActivity extends ActionBarActivity {
 
             Long todoItemID = Long.parseLong(data.getExtras().getString("itemID"));
             TodoItem todoItem = TodoItem.load(TodoItem.class, todoItemID);
-
-            itemsAdapter.notifyDataSetChanged();
             Toast.makeText(this, todoItem.getBody(), Toast.LENGTH_SHORT).show();
+
+            todoItems = TodoItem.all();
+            itemsAdapter = new ItemsAdapter(this, todoItems);
+            lvItems.setAdapter(itemsAdapter);
         }
 
     }
