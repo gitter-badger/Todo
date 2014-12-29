@@ -9,7 +9,6 @@ Completed user stories:
  * [x] Required: Created ToDo App
  * [x] Required: Added Edit feature.
  * [x] Suggested: Persist the todo items into SQLite instead of a text file
- * [x] Suggested: Improve style of the todo items in the list using a custom adapter
  * [x] Added ActiveAndroid ORM
 
 Notes:
