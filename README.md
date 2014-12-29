@@ -2,16 +2,17 @@
 
 This is an Android app for adding, updating and removing items on your "ToDo" list.
 
-Time spent: About 3 hours so far
+Time spent: About 12 hours so far
 
 Completed user stories:
 
  * [x] Required: Created ToDo App
  * [x] Required: Added Edit feature.
- 
-Notes:
+ * [x] Suggested: Persist the todo items into SQLite instead of a text file
+ * [x] Suggested: Improve style of the todo items in the list using a custom adapter
+ * [x] Added ActiveAndroid ORM
 
-Not sure if I'm persisting correctly as I've not used the hint "saveItems" on the last step. I'm going to start working on "Extras" next.
+Notes:
 
 Below gif displays the required user stories:
 
